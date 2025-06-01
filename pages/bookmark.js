@@ -20,7 +20,7 @@ const bookmarkedPosts = useSelector((state) => state.user.bookmarkedPosts);
   useEffect(() => {
     console.log('🧪 me 변화 감지:', me);
     console.log('🧪 bookmarkedPosts:', me?.bookmarkedPosts);
-    console.log('🧪 likedPosts:', me?.likedPosts);
+  //  console.log('🧪 likedPosts:', me?.likedPosts);
   }, [me]);
 
 useEffect(() => {
