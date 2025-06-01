@@ -4,20 +4,18 @@ import PostCard from '../components/PostCard';
 import { Tabs, Empty } from 'antd';
 import {
   BookOutlined,
-  HeartOutlined,
-  ShoppingOutlined,
+
 } from '@ant-design/icons';
 import { useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+
 import { fetchLikedPosts, fetchBookmarkedPosts } from '../reducers/user';
 
 
 export default function BookmarkPage() {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.user.me);
-   const savedItems = me?.savedItems || [];
-const likedPosts = useSelector((state) => state.user.likedPosts);
+  // const savedItems = me?.savedItems || [];
+//const likedPosts = useSelector((state) => state.user.likedPosts);
 const bookmarkedPosts = useSelector((state) => state.user.bookmarkedPosts);
   useEffect(() => {
     console.log('🧪 me 변화 감지:', me);

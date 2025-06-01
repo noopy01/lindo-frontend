@@ -1,22 +1,22 @@
 import { useDispatch,useSelector } from "react-redux";
-import { Form, Input, Button, Select, Typography, Upload, Row, Col, Tag, Tooltip, Card, message } from "antd";
-import ImgCrop from "antd-img-crop";
+import { Form, Input, Button, Select, Typography, Row, Col, Tag, Tooltip, Card, message } from "antd";
+//import ImgCrop from "antd-img-crop";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { categories,addProduct } from "../reducers/product";
-import shortId from "shortid";
+//import shortId from "shortid";
 import { useRouter } from "next/router";
-import { UploadOutlined } from "@ant-design/icons";
+//import { UploadOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 const { Title } = Typography;
-const { Option } = Select;
+//const { Option } = Select;
 
-const UploadForm = ({ me }) => {
+const UploadForm = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [fileList, setFileList] = useState([]);
   const [productTags, setProductTags] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [, setSelectedCategory] = useState(""); 
  const addProductError = useSelector((state) => state.product.addProductError);
 const handleSubmit = async (values) => {
   console.log(" 1. handleSubmit 진입");
@@ -64,21 +64,21 @@ const handleSubmit = async (values) => {
       );
     }
   }, [addProductError]);
-  const onChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
+  // const onChange = ({ fileList: newFileList }) => {
+  //   setFileList(newFileList);
+  // };
 
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-      });
-    }
-    window.open(src);
-  };
+  // const onPreview = async (file) => {
+  //   let src = file.url;
+  //   if (!src) {
+  //     src = await new Promise((resolve) => {
+  //       const reader = new FileReader();
+  //       reader.readAsDataURL(file.originFileObj);
+  //       reader.onload = () => resolve(reader.result);
+  //     });
+  //   }
+  //   window.open(src);
+  // };
 
   return (
     <Row justify="center">

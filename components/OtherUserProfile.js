@@ -12,7 +12,7 @@ const OtherUserProfile = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { id } = router.query;
-  const closetItems = useSelector((state) => state.product.product);
+ // const closetItems = useSelector((state) => state.product.product);
   const profileUser = useSelector((state) => state.user.profileUser);
 
   useEffect(() => {

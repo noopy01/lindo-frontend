@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useRouter } from "next/router";
+//import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Head from "next/head";
 import AppLayout from "../components/AppLayout";
@@ -8,9 +8,9 @@ import { fetchClosetData, categories ,setInitialClothes } from "../reducers/prod
 
 const Closet = () => {
   const { me } = useSelector((state) => state.user || {}); 
-  const router = useRouter();
+ // const router = useRouter();
   const dispatch = useDispatch();
-  const { initialClothes, fetchClosetLoading } = useSelector((state) => state.product);
+  const { initialClothes } = useSelector((state) => state.product);
   useEffect(() => {
   console.log("🧺 리덕스에서 초기 옷장 상태:", initialClothes);
 }, [initialClothes]);

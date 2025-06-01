@@ -1,6 +1,6 @@
 import AppLayout from "../components/AppLayout";
 import Head from "next/head";
-import { message,Checkbox, Form, Input, Button, Row, Col, Typography } from "antd";
+import { Checkbox, Form, Input, Button, Row, Col, Typography } from "antd";
 import { useCallback, useState } from "react";
 import useInput from "../hooks/useInput";
 import dynamic from "next/dynamic";

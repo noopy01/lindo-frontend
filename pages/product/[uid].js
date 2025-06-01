@@ -1,9 +1,9 @@
-import { fakeApi, fetchPostsByTaggedProduct} from '../../reducers/user';
+import { fetchPostsByTaggedProduct} from '../../reducers/user';
 import AppLayout from '../../components/AppLayout';
 import Head from 'next/head';
-import Link from 'next/link';
-import { Card, List, Typography, Image } from 'antd';
-import { useRouter, useMemo, } from 'next/router';
+//import Link from 'next/link';
+import { Card, Typography } from 'antd';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProductById } from '../../reducers/product';

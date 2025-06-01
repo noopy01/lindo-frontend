@@ -5,9 +5,9 @@ import { Card, Avatar, Button, Modal,Affix ,Row, Col } from "antd";
 import FollowList from "./FollowList";
 import FollowingList from "./FollowingList";
 import  LoginForm from "../components/LoginForm";
-import { fakeApi,logOut,setLogOutLoading,fetchUserProfile,loadMyInfo,loadFollowers,loadFollowings} from "../reducers/user";
+import {logOut,setLogOutLoading,fetchUserProfile,loadMyInfo,loadFollowers,loadFollowings} from "../reducers/user";
 import Link from "next/link";
-import Image from "next/image";
+//import Image from "next/image";
 import { UploadOutlined } from "@ant-design/icons";
 import Router from "next/router";
 //import { loadUserPosts } from "../reducers/post";
@@ -50,7 +50,7 @@ useEffect(() => {
 useEffect(() => {
   console.log("🧾 followingsList 확인:", followingsList);
 }, [followingsList]);
-  const [viewedUser, setViewedUser] = useState(null);
+//  const [viewedUser, setViewedUser] = useState(null);
   const [postsVisible, setPostsVisible] = useState(true);
   const [followerModalVisible, setFollowerModalVisible] = useState(false);
   const [followingModalVisible, setFollowingModalVisible] = useState(false);

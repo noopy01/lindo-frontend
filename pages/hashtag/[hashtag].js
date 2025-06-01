@@ -15,7 +15,7 @@ const HashtagPage = () => {
   
   useEffect(() => {
     if (hashtag) {
-      dispatch(loadHashtagPosts({ hashtag, lastId }));
+      dispatch(loadHashtagPosts({ hashtag }));
     }
   }, [hashtag]);
 

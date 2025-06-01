@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button, Row, Col, Modal, Typography } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import Router from "next/router";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { categories ,deleteProduct } from "../reducers/product";
 
 const { Title, Paragraph } = Typography;
@@ -13,7 +13,7 @@ const ClosetForm = ({  clothesData,showUploadButton = true, isOwner }) => {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isOpen, setIsOpen] = useState(false); // 닫힌 옷장 상태 제어
+ // const [isOpen, setIsOpen] = useState(false); // 닫힌 옷장 상태 제어
   useEffect(() => {
     console.log("🧺 clothesData in ClosetForm:", clothesData); // ✅ 카테고리별 옷들 확인
   }, [clothesData])

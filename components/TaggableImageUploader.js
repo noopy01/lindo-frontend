@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { uploadImage } from '../reducers/post'; // uploadImage thunk 불러오기
 const TaggableImageUploader = ({
-  postData,
+ // postData,
    setUploadedImages,
   clothes,
   waitingTagItem,
@@ -12,8 +12,8 @@ const TaggableImageUploader = ({
   setImages,
   taggedProductsByImage,
   setTaggedProductsByImage,
-  hashtags,
-  setHashtags
+  //hashtags,
+ // setHashtags
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [activeCategory, setActiveCategory] = useState('');

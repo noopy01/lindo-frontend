@@ -3,7 +3,7 @@ const { default: build } = require('next/dist/build');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  //output: "export",
+ // output: "export",
   staticPageGenerationTimeout: 120,
   images: {
     domains: ['lindo-image-bucket.s3.ap-northeast-2.amazonaws.com'],

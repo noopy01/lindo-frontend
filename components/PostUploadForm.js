@@ -23,18 +23,18 @@ const PostUploadForm = () => {
   const [waitingTagItem, setWaitingTagItem] = useState(null);
   const { me , profileUser} = useSelector((state) => state.user);
   //const uploadImage = useSelector((state) => state.post.uploadedImages);
-  const [imageFiles, setImageFiles] = useState([]);
+ // const [imageFiles, setImageFiles] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]); // 서버에서 받은 URL들
  const [images, setImages] = useState([]);               // ✅ 태깅용
 
-  const user = useMemo(() => {
-      if (!me) return null;
-      return me.id === profileUser?.id ? me : profileUser;
-    }, [me, profileUser]);
+  // const user = useMemo(() => {
+  //     if (!me) return null;
+  //     return me.id === profileUser?.id ? me : profileUser;
+  //   }, [me, profileUser]);
 
   // ✅ 게시 시 호출되는 함수 내부에 dispatch 코드 포함
 const handleSubmit = async () => {
-  const allClothes = Object.values(clothes).flat();
+  //const allClothes = Object.values(clothes).flat();
 
   // const taggedProducts = Object.values(taggedProductsByImage).flat().map((tag) => {
   //   const product = allClothes.find((item) => item.uid === tag.uid);
@@ -131,7 +131,7 @@ console.log("📌 최종 postData.taggedProducts:", taggedProducts)
     console.error(err);
   }
 };
-;
+
 
   // useEffect(() => {
   //   dispatch(fetchProduct());

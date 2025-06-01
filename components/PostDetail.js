@@ -23,7 +23,7 @@ import {
   bookmark,
   unbookmark,
   updatePost,
-  loadPost,
+ 
   addPostToMainPosts 
 } from '../reducers/post';
 //import { removePostOfMe } from '../reducers/user';
@@ -37,7 +37,7 @@ function PostDetail() {
   const { id } = router.query;
   const mainPosts = useSelector((state) => state.post.mainPosts);
   const me = useSelector((state) => state.user.me);
-  const { removePostLoading } = useSelector((state) => state.post);
+  //const { removePostLoading } = useSelector((state) => state.post);
   const [editMode, setEditMode] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 const [clientReady, setClientReady] = useState(false);

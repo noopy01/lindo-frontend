@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Row,Col,List, Input, Tabs, Spin, message } from 'antd';
+import { Row,Col, Input, Tabs, Spin, message } from 'antd';
 import Link from "next/link";
 import { SearchOutlined,LeftOutlined } from '@ant-design/icons';
 import { useState } from 'react';

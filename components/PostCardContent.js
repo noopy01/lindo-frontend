@@ -11,7 +11,7 @@ const PostCardContent = ({
   postId,
   postData='', 
   editMode = false, 
-  onChangePost, 
+  //onChangePost, 
   onCancelUpdate }) => {
   const { updatePostLoading, updatePostDone } = useSelector((state) => state.post);
   const [editText, setEditText] = useState(postData || '');
@@ -37,7 +37,7 @@ const PostCardContent = ({
     .unwrap()
     .then(() => {
       message.success("수정 완료!");
-      setEditMode(false); // 수정 종료
+     // setEditMode(false); // 수정 종료
     })
     .catch((err) => {
       message.error("수정 실패");

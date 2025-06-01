@@ -141,7 +141,7 @@ const { Content } = Layout;
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { me, followingsList } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
   const [visiblePosts, setVisiblePosts] = useState([]);
   const isLoggedIn = !!me?.id;
 const posts = useSelector((state) => state.post.posts);

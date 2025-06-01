@@ -26,8 +26,8 @@ function Login() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { me, logInLoading, logInError } = useSelector((state) => state.user);
-  const [email, onChangeEmail] = useInput("");
-  const [password, onChangePassword] = useInput("");
+  // const [email, onChangeEmail] = useInput("");
+  // const [password, onChangePassword] = useInput("");
 
 useEffect(() => {
   if (logInError) {
@@ -44,16 +44,16 @@ useEffect(() => {
     }
   }, [me, router, dispatch]);
 
-  const onSubmitForm = useCallback(() => {
-    dispatch(logIn({ email, password }))
-      .unwrap()
-      .then((user) => {
-        localStorage.setItem("me", JSON.stringify(user)); // ✅ 저장
-      })
-      .catch((err) => {
-        message.error("로그인 실패: " + err);
-      });
-  }, [email, password, dispatch]);
+  // const onSubmitForm = useCallback(() => {
+  //   dispatch(logIn({ email, password }))
+  //     .unwrap()
+  //     .then((user) => {
+  //       localStorage.setItem("me", JSON.stringify(user)); // ✅ 저장
+  //     })
+  //     .catch((err) => {
+  //       message.error("로그인 실패: " + err);
+  //     });
+  // }, [email, password, dispatch]);
   
 
   return (
