@@ -14,7 +14,7 @@ const { Title } = Typography;
 const UploadForm = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const [fileList, setFileList] = useState([]);
+  const [fileList,] = useState([]);
   const [productTags, setProductTags] = useState([]);
   const [, setSelectedCategory] = useState(""); 
  const addProductError = useSelector((state) => state.product.addProductError);

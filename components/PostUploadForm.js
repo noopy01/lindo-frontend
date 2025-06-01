@@ -1,4 +1,4 @@
-import { useState,useMemo, useEffect   } from 'react';
+import { useState, useEffect   } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Image from 'next/image';
 import TaggableImageUploader from './TaggableImageUploader';
@@ -21,7 +21,7 @@ const PostUploadForm = () => {
   const [taggedProductsByImage, setTaggedProductsByImage] = useState({}); // 기존 tagsByImage  
   const [content, setContent] = useState('');
   const [waitingTagItem, setWaitingTagItem] = useState(null);
-  const { me , profileUser} = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
   //const uploadImage = useSelector((state) => state.post.uploadedImages);
  // const [imageFiles, setImageFiles] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]); // 서버에서 받은 URL들

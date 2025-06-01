@@ -1,5 +1,5 @@
 import AppLayout from "../components/AppLayout";
-import { useCallback, useEffect } from "react";
+import {  useEffect } from "react";
 import {
   Form,
   Input,
@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import useInput from "../hooks/useInput";
+//import useInput from "../hooks/useInput";
 import { logIn } from "../reducers/user";
 import { fetchClosetData } from "../reducers/product";
 import Link from "next/link";
