@@ -1,7 +1,7 @@
 import { useSelector,useDispatch } from 'react-redux';
 import AppLayout from '../components/AppLayout';
 import PostCard from '../components/PostCard';
-import { Tabs, Empty } from 'antd';
+import { Tabs, Empty, Row ,Col } from 'antd';
 import {
   BookOutlined,
 
@@ -34,27 +34,28 @@ useEffect(() => {
   }
 
  
-
-
-
-  const items = [
-    {
-      key: 'style',
-      label: (
-        <span style={{ fontSize: '16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <BookOutlined />  북마크
-        </span>
-      ),
-      children: (
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-          {bookmarkedPosts.length > 0 ? (
-            bookmarkedPosts.map((post) => <PostCard key={post.id} post={post} />)
-          ) : (
-            <Empty description="북마크한 게시글이 없습니다." />
-          )}
-        </div>
-      ),
-    },
+const items = [
+  {
+    key: 'style',
+    label: (
+      <span style={{ fontSize: '16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <BookOutlined /> 북마크
+      </span>
+    ),
+    children: (
+      bookmarkedPosts.length > 0 ? (
+        <Row gutter={[16, 16]}>
+          {bookmarkedPosts.map((post) => (
+            <Col key={post.id} xs={24} sm={12} md={12} lg={6}>
+              <PostCard post={post} />
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <Empty description="북마크한 게시글이 없습니다." />
+      )
+    ),
+  },
     // {
     //   key: 'item',
     //   label: (
