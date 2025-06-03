@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Form, Input, Button } from 'antd';
 
 import { addComment } from '../reducers/post';
@@ -11,19 +11,21 @@ const CommentForm = ({ post }) => {
   const id = useSelector((state) => state.user.me?.id);
   const { addCommentDone, addCommentLoading } = useSelector((state) => state.post);
 
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const { control, handleSubmit, reset } = useForm();
 
-  useEffect(() => {
-    if (addCommentDone) {
-      reset(); // 모든 필드 초기화
-    }
-  }, [addCommentDone, reset]);
+useEffect(() => {
+  console.log("✅ addCommentDone:", addCommentDone);
+  if (addCommentDone) {
+    reset();
+  }
+}, [addCommentDone, reset]);
+
 
   const onSubmit = (data) => {
-     console.log('📨 댓글 전송 데이터:', data);
+    console.log('📨 댓글 전송 데이터:', data);
     dispatch(
       addComment({
-        content: data.commentText, // useForm에서 가져온 값
+        content: data.commentText,
         postId: post.id,
         userId: id,
       })
@@ -32,15 +34,23 @@ const CommentForm = ({ post }) => {
 
   return (
     <Form onFinish={handleSubmit(onSubmit)} style={{ position: 'relative', margin: 0 }}>
-      <Form.Item
-        rules={[{ required: true, message: '댓글을 입력해주세요.' }]}
-        style={{ marginBottom: '8px' }}
-      >
-        <Input.TextArea
-          rows={4}
-          placeholder="댓글을 입력하세요"
-          {...register('commentText', { required: true })}
-          onChange={(e) => setValue('commentText', e.target.value)}
+      <Form.Item style={{ marginBottom: '8px' }}>
+        <Controller
+          name="commentText"
+          control={control}
+          rules={{ required: '댓글을 입력해주세요.' }}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Input.TextArea
+                {...field}
+                rows={4}
+                placeholder="댓글을 입력하세요"
+              />
+              {error && (
+                <div style={{ color: 'red', marginTop: '4px' }}>{error.message}</div>
+              )}
+            </>
+          )}
         />
       </Form.Item>
       <Form.Item>
