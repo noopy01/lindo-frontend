@@ -31,7 +31,6 @@ const Home = () => {
   }, []);
 
 
-
 // 게시글 불러오기
 const fetchMorePosts = useCallback(async () => {
   if (isFetching || !hasNext) return;
