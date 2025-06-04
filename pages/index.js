@@ -1,6 +1,6 @@
 import Head from "next/head";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector} from "react-redux";
+import { useEffect, useState,useCallback  } from "react";
 import { Row, Col, Layout, Card } from "antd";
 import AppLayout from "../components/AppLayout";
 import PostCard from "../components/PostCard";
@@ -22,6 +22,8 @@ const Home = () => {
   const [clientLoaded, setClientLoaded] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [hasNext, setHasNext] = useState(true);
+  const [lastFetchedPostId, setLastFetchedPostId] = useState(null);
+
 
   // 클라이언트 렌더링 여부
   useEffect(() => {
@@ -35,7 +37,9 @@ const Home = () => {
   };
 
   // 게시글 불러오기
-const fetchMorePosts = async () => {
+
+// 게시글 불러오기
+const fetchMorePosts = useCallback(async () => {
   if (isFetching || !hasNext) return;
   setIsFetching(true);
 
@@ -72,45 +76,56 @@ const fetchMorePosts = async () => {
       });
     }
 
+    // 🔄 더 이상 getLastPostId() 사용 X
+    const resultAll = await dispatch(loadPosts(lastFetchedPostId)).unwrap();
 
-const lastId = getLastPostId();
+    const newPosts = Array.isArray(resultAll)
+      ? resultAll
+      : resultAll?.posts || [];
 
-const resultAll = await dispatch(loadPosts(lastId)).unwrap();
-const newPosts = Array.isArray(resultAll)
-  ? resultAll
-  : resultAll?.posts || [];
-console.log("📩 요청한 lastId:", lastId);
-const lastPostInResponse = newPosts.at(-1);
-const reachedEnd = !lastPostInResponse || lastPostInResponse.id >= lastId;
+    const lastPostInResponse = newPosts.at(-1);
 
-setHasNext(
-  reachedEnd
-    ? false
-    : resultAll && typeof resultAll.hasNext === "boolean"
-    ? resultAll.hasNext
-    : false
-);
+    // 중복된 응답 방지
+    if (lastFetchedPostId !== null && lastPostInResponse?.id === lastFetchedPostId) {
+      console.warn("🛑 중복된 lastId 응답: 서버 정렬 또는 조건 확인 필요");
+      setHasNext(false);
+      return;
+    }
 
+    // 📌 다음 요청을 위한 lastPostId 업데이트
+    setLastFetchedPostId(lastPostInResponse?.id ?? null);
+    console.log("🆕 새로운 마지막 postId 저장:", lastPostInResponse?.id);
 
+    // hasNext 갱신
+    setHasNext(
+      newPosts.length === 0
+        ? false
+        : resultAll && typeof resultAll.hasNext === "boolean"
+        ? resultAll.hasNext
+        : true
+    );
+
+    // visiblePosts에 누적 추가 (중복 제거)
     const allCombined = [...userPosts, ...newPosts];
-   
-   const uniquePostMap = new Map();
-[...visiblePosts, ...allCombined].forEach((post) => {
-  uniquePostMap.set(post.id, post);
-});
-console.log("📦 응답된 posts 길이:", newPosts.length);
-console.log("🧭 마지막 응답 postId:", newPosts.at(-1)?.id);
+    const uniquePostMap = new Map();
+    [...visiblePosts, ...allCombined].forEach((post) => {
+      uniquePostMap.set(post.id, post);
+    });
 
-setVisiblePosts(Array.from(uniquePostMap.values()));
-console.log("🔍 resultAll.hasNext 값:", resultAll?.hasNext);
-//setHasNext(resultAll?.hasNext === undefined ? false : resultAll.hasNext);
+    setVisiblePosts(Array.from(uniquePostMap.values()));
+    console.log("📋 누적된 visiblePosts 수:", visiblePosts.length);
+    
+
+    console.log("📦 응답된 posts 길이:", newPosts.length);
+    console.log("🧭 마지막 응답 postId:", newPosts.at(-1)?.id);
+console.log("🧩 최종 visiblePosts:", visiblePosts.map((p) => p.id));
+console.log("🆕 새로운 마지막 postId 저장:", lastPostInResponse?.id);
   } catch (error) {
     console.error("🔥 게시글 불러오기 실패:", error);
   } finally {
     setIsFetching(false);
   }
-};
-
+}, [dispatch, visiblePosts, isLoggedIn, hasNext, isFetching, lastFetchedPostId, me]);
 
   // 스크롤 이벤트
   useEffect(() => {
@@ -120,13 +135,14 @@ console.log("🔍 resultAll.hasNext 값:", resultAll?.hasNext);
       const fullHeight = document.documentElement.scrollHeight;
 
       if (scrollY + viewportHeight >= fullHeight - 300) {
-        fetchMorePosts();
+        fetchMorePosts(); // 여기서 최신 상태의 fetchMorePosts가 필요
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [visiblePosts, isFetching, hasNext]);
+  }, [fetchMorePosts]);
+
 
   // 초기 로딩
   useEffect(() => {

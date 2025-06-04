@@ -1,28 +1,31 @@
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadPosts } from "../reducers/post";
+import throttle from "lodash/throttle";
 
 export default function ScrollListener() {
   const dispatch = useDispatch();
   const { mainPosts, hasNext, loadPostsLoading } = useSelector((state) => state.post);
 
-  const lastId = mainPosts?.length > 0 ? mainPosts[mainPosts.length - 1]?.id : null;
-
   useEffect(() => {
-    function onScroll() {
-      if (window.scrollY + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 300) {
+    const onScroll = throttle(() => {
+      const scrollY = window.scrollY;
+      const viewportHeight = document.documentElement.clientHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+
+      if (scrollY + viewportHeight >= fullHeight - 300) {
+        const lastId = mainPosts?.length > 0 ? mainPosts[mainPosts.length - 1]?.id : null;
         if (hasNext && !loadPostsLoading) {
           dispatch(loadPosts(lastId));
         }
       }
-    }
+    }, 500); // 0.5초에 한 번만 실행
 
     window.addEventListener("scroll", onScroll);
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
-  }, [lastId,hasNext, loadPostsLoading, dispatch]);
+  }, [mainPosts, hasNext, loadPostsLoading, dispatch]);
 
-  return null; // 화면에 보이지 않도록 null 반환
+  return null;
 }
