@@ -54,21 +54,34 @@ console.log("✅ 전체 search state:", useSelector((state) => state.search));
     <Row gutter={[16, 16]}>
       {results?.hashtags?.map((post) => (
         <Col key={post.id} xs={12} sm={8} md={6}>
-          <Link href={`/post/${post.id}`} legacyBehavior>
-            <a>
-              <img
-                src={post.thumbnail}
-                alt="게시글 썸네일"
-                style={{
-                  width: '100%',
-                  height: '200px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  background: '#f5f5f5',
-                }}
-              />
-            </a>
-          </Link>
+         <Link href={`/post/${post.id}`} legacyBehavior>
+  <a
+    style={{
+      position: 'relative',
+      display: 'block',
+      width: '100%',
+      paddingTop: '100%',
+      borderRadius: '8px',
+      overflow: 'hidden',
+      background: '#f5f5f5',
+      border: '1px solid #eee',
+    }}
+  >
+    <img
+      src={post.thumbnail}
+      alt="게시글 썸네일"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+      }}
+    />
+  </a>
+</Link>
+
         </Col>
       ))}
     </Row>
@@ -78,21 +91,34 @@ console.log("✅ 전체 search state:", useSelector((state) => state.search));
     <Row gutter={[16, 16]}>
       {results?.products?.map((product) => (
         <Col key={product.uid} xs={12} sm={8} md={6}>
-          <Link href={`/product/${product.uid}`} legacyBehavior>
-            <a>
-              <img
-                src={product.thumbnail}
-                alt="상품 썸네일"
-                style={{
-                  width: '100%',
-                  height: '200px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  background: '#f5f5f5',
-                }}
-              />
-            </a>
-          </Link>
+         <Link href={`/product/${product.uid}`} legacyBehavior>
+  <a
+    style={{
+      position: 'relative',
+      display: 'block',
+      width: '100%',
+      paddingTop: '100%', // 정사각형 비율 유지
+      borderRadius: '8px',
+      overflow: 'hidden',
+      background: '#f5f5f5',
+      border: '1px solid #eee',
+    }}
+  >
+    <img
+      src={product.thumbnail}
+      alt="상품 썸네일"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+      }}
+    />
+  </a>
+</Link>
+
         </Col>
       ))}
     </Row>

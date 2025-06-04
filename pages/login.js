@@ -84,9 +84,7 @@ useEffect(() => {
       .then((user) => {
         localStorage.setItem("me", JSON.stringify(user));
       })
-      .catch((err) => {
-        message.error("로그인 실패: " + err.message);
-      });
+      
   }}
   layout="vertical"
   style={{ marginTop: 20 }}

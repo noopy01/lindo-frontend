@@ -285,6 +285,9 @@ console.log("🔥 user 객체 확인:", user);
           <img
             src={post.thumbnail || "/default-image.png"}
             alt="post thumbnail"
+              onError={(e) => {
+    e.target.src = "/default-image.png";
+  }}
             style={{
               position: "absolute",
               top: 0,

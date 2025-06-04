@@ -1,18 +1,33 @@
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch  } from "react-redux";
 import { Menu } from "antd";
 import { getMenuItems, getCombinedMenuItems } from "./menuItems";
 import { useRouter } from "next/router";
+import { useCallback } from "react"; // ✅ useCallback 추가
+import { logOut } from "../reducers/user"; // ✅ 로그아웃 액션 추가
 //import Link from "next/link";
 
 const AppLayout = ({ children }) => {
   const { pathname } = useRouter();
-
+  const dispatch = useDispatch(); // ✅ 추가
+  const router = useRouter();  
   const me = useSelector((state) => state.user?.me); 
   const isLoggedIn = !!me; 
   const nickname = me?.nickname || "Guest"; 
 
-  const menuItems = getMenuItems(isLoggedIn, nickname, pathname);
+const onLogout = useCallback(() => {
+  dispatch(logOut())
+    .unwrap()
+    .then(() => {
+      router.push("/"); // 로그아웃 성공 시 이동
+    })
+    .catch((err) => {
+      console.error("❌ 로그아웃 실패:", err);
+    });
+}, [dispatch, router]);
+
+
+  const menuItems = getMenuItems(isLoggedIn, nickname, pathname,onLogout);
   const combinedItems = getCombinedMenuItems(pathname);
 
   return (

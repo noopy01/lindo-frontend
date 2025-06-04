@@ -43,7 +43,6 @@ function PostDetail() {
 const [clientReady, setClientReady] = useState(false);
 const likedPosts = useSelector((state) => state.user.likedPosts);
  const bookmarkedPosts = useSelector((state) => state.user.bookmarkedPosts);
-
 useEffect(() => {
   setClientReady(true);
 }, []);
@@ -170,7 +169,7 @@ const isLiked = useMemo(() => {
 
   const isBookmarked = useMemo(() => {
     return bookmarkedPosts?.some((p) => String(p.id) === String(post?.id));
-  }, [bookmarkedPosts, post?.id]);
+  }, [bookmarkedPosts, post]);
 
 
 useEffect(() => {
@@ -247,9 +246,9 @@ const onRemovePost = useCallback(
     }
   }, [me, dispatch, post, isBookmarked]);
   
-  // if (!router.isReady) {
-  //   return null; // or <LoadingSpinner />
-  // }
+  if (!router.isReady) {
+    return null; // or <LoadingSpinner />
+  }
   
   // if (!post) return <p>게시물을 찾을 수 없습니다.</p>;
  // console.log('likedPosts:', me?.likedPosts);

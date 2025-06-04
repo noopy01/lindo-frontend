@@ -47,7 +47,27 @@ const Signup = () => {
   //   console.log(email, nickname, password);
   //   return dispatch(signup({ email, password, nickname }));
   // }, [email, nickname, password, passwordCheck, term, dispatch]);
-  const onSubmit = useCallback(() => {
+  // const onSubmit = useCallback(() => {
+  // if (password !== passwordCheck) {
+  //   setPasswordError(true);
+  //   return;
+  // }
+  // if (!term) {
+  //   setTermError(true);
+  //   return;
+  // }
+
+//   dispatch(signup({ email, password, nickname }))
+//     .unwrap()
+//     .then(() => {
+//       alert("회원가입이 완료되었습니다!");
+//       router.push("/login");
+//     })
+//     .catch((err) => {
+//       alert("회원가입 실패: " + (err?.message || "서버 오류"));
+//     });
+// }, [email, nickname, password, passwordCheck, term, dispatch, router]);
+const onSubmit = useCallback(() => {
   if (password !== passwordCheck) {
     setPasswordError(true);
     return;
@@ -63,10 +83,25 @@ const Signup = () => {
       alert("회원가입이 완료되었습니다!");
       router.push("/login");
     })
-    .catch((err) => {
-      alert("회원가입 실패: " + (err?.message || "서버 오류"));
-    });
-}, [email, nickname, password, passwordCheck, term, dispatch, router]);
+.catch((err) => {
+  console.error("❌ 회원가입 에러 전체:", err);
+
+  const rawMessage =
+    err?.errorMessage || err?.message || "서버 오류";
+
+  let finalMessage = "서버 오류";
+
+  if (rawMessage.toLowerCase().includes("아이디")) {
+    finalMessage = "이미 가입된 이메일입니다.";
+  }
+
+  alert("회원가입 실패: " + finalMessage);
+});
+
+}, [email, nickname, password, passwordCheck, term, dispatch, router]); // ✅ 여기까지 닫아줘야 함!
+
+
+
 
   return (
     <AppLayout>

@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import { Menu, Dropdown } from "antd";
 
 // 메뉴 스타일을 경로 기반으로 처리하도록 수정
-export const getMenuItems = (isLoggedIn, nickname, pathname) => {
+export const getMenuItems = (isLoggedIn, nickname, pathname,onLogout) => {
   const isActive = (path) => pathname === path;
   const activeStyle = {
     fontWeight: 'bold',
@@ -25,10 +26,29 @@ export const getMenuItems = (isLoggedIn, nickname, pathname) => {
         </Link>
       ),
     },
-    isLoggedIn
+   isLoggedIn
       ? {
-          key: "user",
-          label: <span style={{ fontWeight: "bold" }}>{nickname} 님</span>,
+          key: "userMenu",
+          label: (
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item key="mypage">
+                    <Link href={`/mypage`}>마이페이지</Link>
+                  </Menu.Item>
+                  <Menu.Item key="logout" onClick={onLogout}>
+                    로그아웃
+                  </Menu.Item>
+                </Menu>
+              }
+              placement="bottomRight"
+              trigger={['click']}
+            >
+              <span style={{ fontWeight: "bold", cursor: "pointer" }}>
+                {nickname} 님
+              </span>
+            </Dropdown>
+          ),
         }
       : {
           key: "login",

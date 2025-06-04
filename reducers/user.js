@@ -872,7 +872,14 @@ const userSlice = createSlice({
     draft.bookmarkedPosts.unshift(action.payload);
   }
 })
-
+// .addCase(bookmark.rejected, (draft, action) => {
+//   if (action.payload?.errorCode === 'E101') {
+//     const postId = action.meta.arg; // thunk에 넘긴 postId
+//     if (!draft.bookmarkedPosts.some((p) => p.id === postId)) {
+//     //  draft.bookmarkedPosts.push({ id: postId }); // 최소한 id만 넣어줌
+//     }
+//   }
+// })
       .addCase(unbookmark.fulfilled, (draft, action) => {
         const { postId } = action.payload;
       

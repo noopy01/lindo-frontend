@@ -7,17 +7,27 @@ import {
 
 } from '@ant-design/icons';
 import { useEffect } from 'react';
-
+import { useRouter } from 'next/router';
 import { fetchLikedPosts, fetchBookmarkedPosts } from '../reducers/user';
 
 
 export default function BookmarkPage() {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.user.me);
+    const router = useRouter();
   // const savedItems = me?.savedItems || [];
 //const likedPosts = useSelector((state) => state.user.likedPosts);
 const bookmarkedPosts = useSelector((state) => state.user.bookmarkedPosts);
-  useEffect(() => {
+ 
+useEffect(() => {
+    if (!me?.id) {
+      router.push('/login'); // ✅ 로그인 안 되어 있으면 로그인 페이지로 이동
+    }
+  }, [me, router]);
+
+  
+
+useEffect(() => {
     console.log('🧪 me 변화 감지:', me);
     console.log('🧪 bookmarkedPosts:', me?.bookmarkedPosts);
   //  console.log('🧪 likedPosts:', me?.likedPosts);
@@ -33,7 +43,8 @@ useEffect(() => {
     return <AppLayout><p>로그인 정보를 불러오는 중입니다...</p></AppLayout>;
   }
 
- 
+   
+   if (!me?.id) return null;
 const items = [
   {
     key: 'style',

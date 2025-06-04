@@ -26,6 +26,14 @@ const PostUploadForm = () => {
  // const [imageFiles, setImageFiles] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]); // 서버에서 받은 URL들
  const [images, setImages] = useState([]);               // ✅ 태깅용
+ const [selectedIndex, setSelectedIndex] = useState(0);
+const resetImageState = () => {
+  setImages([]);
+  setUploadedImages([]);
+  setTaggedProductsByImage({});
+  setSelectedIndex(0);
+  setWaitingTagItem(null);
+};
 
   // const user = useMemo(() => {
   //     if (!me) return null;
@@ -34,33 +42,7 @@ const PostUploadForm = () => {
 
   // ✅ 게시 시 호출되는 함수 내부에 dispatch 코드 포함
 const handleSubmit = async () => {
-  //const allClothes = Object.values(clothes).flat();
-
-  // const taggedProducts = Object.values(taggedProductsByImage).flat().map((tag) => {
-  //   const product = allClothes.find((item) => item.uid === tag.uid);
-  //   return {
-  //     ...tag,
-  //     name: product?.name || '이름 없음',
-  //     price: product?.price || 0,
-  //     //url: product?.url || '',
-  //   };
-  // });
-// const taggedProducts = Object.entries(taggedProductsByImage).map(([imageId, tags]) => {
-//   const enrichedTags = tags.map((tag) => {
-//     const product = allClothes.find((item) => item.uid === tag.uid);
-//     return {
-//       ...tag,
-//       name: product?.name || tag.name || '이름 없음',
-//       price: product?.price ?? tag.price ?? 0,
-//       url: product?.thumbnail || tag.url || '',
-//     };
-//   });
-
-//   return {
-//     imageId,
-//     tags: enrichedTags,
-//   };
-// });
+ 
 const taggedProducts = Object.entries(taggedProductsByImage).map(([imageId, tags]) => ({
   imageId,
 
@@ -110,19 +92,15 @@ console.log("📌 최종 postData.taggedProducts:", taggedProducts)
       Comments: [],
     };
 
-    // if (result.meta.requestStatus === 'fulfilled') {
-    //   dispatch(addPostToMe(newPost));
-    //   dispatch(fetchUserProfile(me.id));
-    //   message.success('게시글이 업로드되었습니다!');
-    //   router.push('/mypage');
-    // } else {
-    //   message.error(`업로드 실패: ${result.payload}`);
-    // }
+
     if (result.meta.requestStatus === 'fulfilled') {
   dispatch(addPostToMe(newPost));
     await new Promise(resolve => setTimeout(resolve, 500)); // 500ms 기다림
   await dispatch(fetchUserProfile(me.id)); // ✅ 완료 보장
   message.success('게시글이 업로드되었습니다!');
+
+ resetImageState();
+
   router.push('/mypage');
 }
 
@@ -195,6 +173,8 @@ useEffect(() => {
           setHashtags={setHashtags}
           waitingTagItem={waitingTagItem}
           setWaitingTagItem={setWaitingTagItem}
+           selectedIndex={selectedIndex}
+  setSelectedIndex={setSelectedIndex}
         />
 
 

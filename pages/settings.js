@@ -1,6 +1,6 @@
 import AppLayout from "../components/AppLayout";
 import Head from 'next/head';
-import NicknameEditForm from "../components/NicknameEditForm";
+//import NicknameEditForm from "../components/NicknameEditForm";
 
 const Settings = () => {
   return (
@@ -10,7 +10,7 @@ const Settings = () => {
     </Head>
     <AppLayout>
       설정 페이지
-      <NicknameEditForm />
+   
     </AppLayout>
     </>
   )

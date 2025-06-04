@@ -14,27 +14,34 @@ const ClosetForm = ({ clothesData, showUploadButton = true, isOwner }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  useEffect(() => {
-    console.log("🧺 clothesData in ClosetForm:", clothesData);
-  }, [clothesData]);
+  // useEffect(() => {
+  //   console.log("🧺 clothesData in ClosetForm:", clothesData);
+  // }, [clothesData]);
 
-  useEffect(() => {
-    console.log("✅ outer 이미지 URL:", clothesData?.outer?.[0]?.thumbnail);
-  }, [clothesData]);
+  // useEffect(() => {
+  //   console.log("✅ outer 이미지 URL:", clothesData?.outer?.[0]?.thumbnail);
+  // }, [clothesData]);
 
   const handlePreview = (product) => {
     setSelectedProduct(product);
     setPreviewOpen(true);
   };
 
-  const handleDelete = async (productUid) => {
-    const productId = String(productUid).split('_')[1]; // ✅ 상품 ID 추출
-    if (confirm("정말 삭제하시겠습니까?")) {
-      await dispatch(deleteProduct(productId));
+const handleDelete = async (productUid) => {
+  const productId = String(productUid).split('_')[1];
+  if (confirm("정말 삭제하시겠습니까?")) {
+    try {
+      const result = await dispatch(deleteProduct(productId)).unwrap(); // ✅ 결과 확인
+      console.log("🗑️ 삭제 성공:", result);
       setPreviewOpen(false);
       setSelectedProduct(null);
+    } catch (err) {
+      console.error("❌ 삭제 실패:", err);
+      message.error("상품 삭제에 실패했습니다.");
     }
-  };
+  }
+};
+
 
   const handleScrollToCategory = (categoryName) => {
     const target = document.getElementById(categoryName);
@@ -111,8 +118,8 @@ const ClosetForm = ({ clothesData, showUploadButton = true, isOwner }) => {
                               <Image
                                 src={item.thumbnail || item.url}
                                 alt={item.name || category}
-                                width={150}
-                                height={150}
+                                width={250}
+                                height={250}
                                 style={{ objectFit: "cover" }}
                               />
                             </div>
@@ -150,7 +157,6 @@ const ClosetForm = ({ clothesData, showUploadButton = true, isOwner }) => {
                 style={{ objectFit: "cover", marginBottom: 20 }}
               />
               <Title level={4}>{selectedProduct.productName}</Title>
-              <Paragraph>상품명: {selectedProduct.productName}</Paragraph>
               <Paragraph>브랜드: {selectedProduct.brand}</Paragraph>
               <Paragraph>
                 가격: ₩{selectedProduct.price?.toLocaleString()}

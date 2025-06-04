@@ -1,5 +1,8 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
+import {   Button, message } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+
 import { useDispatch } from 'react-redux';
 import { uploadImage } from '../reducers/post'; // uploadImage thunk 불러오기
 const TaggableImageUploader = ({
@@ -19,86 +22,7 @@ const TaggableImageUploader = ({
   const [activeCategory, setActiveCategory] = useState('');
   const imageRef = useRef(null);
 const dispatch = useDispatch();
-// const handleFiles = async (fileList) => {
-//   console.log('📂 업로드할 파일 목록:', fileList);
 
-//   try {
-//     const resultAction = await dispatch(uploadImage(fileList)); // ✅ FormData 아님
-//     if (uploadImage.fulfilled.match(resultAction)) {
-//       const uploaded = resultAction.payload;
-//       console.log('📥 서버 응답 확인:', resultAction.payload);
-
-//       setImages((prev) => [...prev, ...uploaded]);
-//     } else {
-//       console.error('업로드 실패:', resultAction.payload);
-//     }
-//   } catch (err) {
-//     console.error('업로드 에러:', err);
-//   }
-// };
-  // const handleFiles = (fileList) => {
-  //   const newImages = Array.from(fileList).map(file => ({
-  //     id: shortId.generate(),
-  //     url: URL.createObjectURL(file),
-  //   }));
-  //   setImages(prev => [...prev, ...newImages]);
-  // };
-// const handleFiles = async (files) => {
-//   const result = await dispatch(uploadImage(files));
-//   if (uploadImage.fulfilled.match(result)) {
-//     const uploaded = result.payload;
-//     console.log('📥 업로드된 이미지들:', uploaded);
-//     const urls = uploaded.map((file) => file.url);
-//     setImages(urls); // ✅ imageUrls로 저장될 수 있게 상태에 저장
-//   }
-// };
-
-// const handleFiles = async (fileList) => {
-//   if (!fileList || fileList.length === 0) {
-//     console.error('파일 없음!');
-//     return;
-//   }
-
-//   const files = Array.from(fileList); // ✅ File 배열로 변환
-//   console.log('📂 업로드할 파일 목록:', files);
-
-//   try {
-//     const resultAction = await dispatch(uploadImage(files)); // ✅ FormData ❌, File[] ✅
-//    console.log('📤 resultAction:', resultAction); // 이걸 찍어주세요
-//     if (uploadImage.fulfilled.match(resultAction)) {
-//       const uploaded = resultAction.payload; // [{ id, src }]
-//       console.log('✅ 서버 응답:', uploaded);
-//       setImages((prev) => [...prev, ...uploaded]);
-//     } else {
-//       console.error('❌ 업로드 실패:', resultAction.payload);
-//     }
-//   } catch (err) {
-//     console.error('❌ 예외 발생:', err);
-//   }
-// };
-
-// const handleFiles = async (files) => {
-//   const result = await dispatch(uploadImage(files));
-
-//   console.log('📤 dispatch(uploadImage) 결과:', result); // ✅ 이거 반드시
-
-//   if (uploadImage.fulfilled.match(result)) {
-//     const uploaded = result.payload;
-//     console.log('✅ 업로드 성공, 서버 응답:', uploaded); // ✅ 응답 구조 확인용
-
-//     const enrichedImages = uploaded.map((file) => ({
-//       id: shortId.generate(),
-//       src: file.url.startsWith('http') ? file.url : `https://api.lindohub.com${file.url}`,
-//     }));
-
-//     console.log('✅ enrichedImages:', enrichedImages); // ✅ 여기까지 찍혀야 정상
-
-//     setUploadedImages((prev) => [...prev, ...enrichedImages]); // ✅ 핵심
-//     setImages((prev) => [...prev, ...enrichedImages]);   
-//   } else {
-//     console.error('❌ 이미지 업로드 실패:', result.payload);
-//   }
-// };
 const handleFiles = async (files) => {
   const result = await dispatch(uploadImage(files));
 
@@ -138,61 +62,61 @@ const handleFiles = async (files) => {
     }
   };
 
-  const handleImageClick = (e) => {
-    if (!waitingTagItem || !imageRef.current || !images[selectedIndex]) return;
-  
-    const rect = imageRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-  
-    const currentImageId = images[selectedIndex].id;
-  
-    // ✅ 여기에 제대로 된 newTag를 생성!
-    // const newTag = {
-    //   uid: waitingTagItem.uid,
-    //   url: waitingTagItem.url,
-    //   name: waitingTagItem.name,
-    //   price: waitingTagItem.price,
-    //   x,
-    //   y,
-    // };
-    const newTag = {
-      uid: waitingTagItem.uid,
-      name: waitingTagItem.productName || waitingTagItem.name,  // 둘 중 하나 대응
-      url: waitingTagItem.thumbnail || waitingTagItem.url,       // 둘 중 하나 대응
-      price: waitingTagItem.price,
-      x,
-      y,
-    };
-    
-  
-    // ✅ 이 시점에서 정확하게 정보가 들어감!
-    setTaggedProductsByImage((prev) => ({
-      ...prev,
-      [currentImageId]: [...(prev[currentImageId] || []), newTag],
-    }));
-  
-    setWaitingTagItem(null);
-  };
-  
   const removeTag = (imageId, uid) => {
-    setTaggedProductsByImage(prev => ({
-      ...prev,
-      [imageId]: prev[imageId].filter(tag => tag.uid !== uid),
-    }));
+  setTaggedProductsByImage(prev => ({
+    ...prev,
+    [imageId]: prev[imageId].filter(tag => tag.uid !== uid),
+  }));
+};
+
+const handleImageClick = (e) => {
+  if (!waitingTagItem || !imageRef.current || !images[selectedIndex] || selectedIndex !== 0) return;
+
+  const rect = imageRef.current.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+  const currentImageId = images[selectedIndex].id;
+
+  const newTag = {
+    uid: waitingTagItem.uid,
+    name: waitingTagItem.productName || waitingTagItem.name,
+    url: waitingTagItem.thumbnail || waitingTagItem.url,
+    price: waitingTagItem.price,
+    x,
+    y,
   };
 
-  const removeImage = (index) => {
-    const imageId = images[index].id;
-    const newImages = images.filter((_, i) => i !== index);
-    const newTags = { ...taggedProductsByImage };
-    delete newTags[imageId];
-    setImages(newImages);
-    setTaggedProductsByImage(newTags);
-    if (selectedIndex >= newImages.length) {
-      setSelectedIndex(Math.max(newImages.length - 1, 0));
+  setTaggedProductsByImage((prev) => {
+    const existingTags = prev[currentImageId] || [];
+    const isDuplicate = existingTags.some(tag => tag.uid === newTag.uid);
+
+    if (isDuplicate) {
+      message.warning("이미 태그된 상품입니다.");
+      return prev;
     }
-  };
+
+    return {
+      ...prev,
+      [currentImageId]: [...existingTags, newTag],
+    };
+  });
+};
+
+
+const removeImage = (indexToRemove) => {
+  const removedImage = images[indexToRemove];
+
+  setImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  setUploadedImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+
+  setTaggedProductsByImage((prev) => {
+    const newTags = { ...prev };
+    delete newTags[removedImage.id];
+    return newTags;
+  });
+};
+
 
   const currentImage = images[selectedIndex];
   const currentTags = taggedProductsByImage[currentImage?.id] || [];
@@ -218,56 +142,104 @@ return (
     </div>
 
     {/* 이미지 태깅 화면 */}
-
       {currentImage && (
-        <div
-          style={{ position: 'relative', width: 400, height: 400, margin: '0 auto' }}
-          onClick={handleImageClick}
-        >
-       <img
-            ref={imageRef}
-            src={currentImage.src}
-  alt="업로드 미리보기"
-  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-/>
+  <div
+    style={{
+      position: 'relative',
+      width: 400,
+      height: 400,
+      margin: '0 auto',
+    }}
+    onClick={handleImageClick}
+  >
+    {/* 이미지 */}
+    <img
+      ref={imageRef}
+      src={currentImage.src}
+      alt="업로드 미리보기"
+      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+    />
 
-        {currentTags.map((tag) => (
-          <div
-            key={tag.uid}
-            style={{
-              position: 'absolute',
-              top: `${tag.y}%`,
-              left: `${tag.x}%`,
-              transform: 'translate(-50%, -50%)',
-              background: 'rgba(0,0,0,0.6)',
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: 12,
-              cursor: 'default',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {tag.uid}
-            <button
-              onClick={() => removeTag(currentImage.id, tag.uid)}
-              style={{
-                marginLeft: 6,
-                background: 'red',
-                border: 'none',
-                borderRadius: '50%',
-                width: 16,
-                height: 16,
-                color: 'white',
-                fontSize: 10,
-                cursor: 'pointer',
-              }}
-            >
-              ×
-            </button>
-          </div>
-        ))}
+    {/* ◀ 이전 버튼 */}
+    <Button
+      icon={<LeftOutlined />}
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedIndex((prev) => Math.max(prev - 1, 0));
+      }}
+      disabled={selectedIndex === 0}
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: 0,
+        transform: 'translateY(-50%)',
+        zIndex: 10,
+        opacity: 0.8,
+      }}
+    />
+
+    {/* ▶ 다음 버튼 */}
+    <Button
+      icon={<RightOutlined />}
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedIndex((prev) => Math.min(prev + 1, images.length - 1));
+      }}
+      disabled={selectedIndex === images.length - 1}
+      style={{
+        position: 'absolute',
+        top: '50%',
+        right: 0,
+        transform: 'translateY(-50%)',
+        zIndex: 10,
+        opacity: 0.8,
+      }}
+    />
+
+    {/* 태그들 */}
+    {currentTags.map((tag, index) => (
+      <div
+        key={tag.uid}
+        style={{
+          position: 'absolute',
+          top: `${tag.y}%`,
+          left: `${tag.x}%`,
+          transform: 'translate(-50%, -50%)',
+          background: 'rgba(0,0,0,0.6)',
+          color: 'white',
+          padding: '4px 8px',
+          borderRadius: 12,
+          cursor: 'default',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+          {index + 1}
+        <button
+          onClick={() => removeTag(currentImage.id, tag.uid)}
+          style={{
+            marginLeft: 6,
+            background: 'red',
+            border: 'none',
+            borderRadius: '50%',
+            width: 16,
+            height: 16,
+            color: 'white',
+            fontSize: 10,
+            cursor: 'pointer',
+          }}
+        >
+          ×
+        </button>
       </div>
-    )}
+    ))}
+  </div>
+)}
+
+    {selectedIndex !== 0 && (
+  <p style={{ textAlign: 'center', color: 'gray', marginTop: 10 }}>
+    ⚠️ 첫 번째 이미지에서만 태그를 등록할 수 있습니다.
+  </p>
+)}
 
     {/* 이미지 리스트 썸네일 + 태그 표시 */}
     {images.length > 0 && (
@@ -288,15 +260,7 @@ return (
                 }}
                 onClick={() => setSelectedIndex(idx)}
               />
-              {tags.length > 0 && (
-                <div style={{ marginTop: 4, fontSize: 12 }}>
-                  {tags.map((tag) => (
-                    <div key={tag.uid}>
-                      {tag.name} <br /> ₩{tag.price?.toLocaleString()}
-                    </div>
-                  ))}
-                </div>
-              )}
+
               <button
                 onClick={() => removeImage(idx)}
                 style={{

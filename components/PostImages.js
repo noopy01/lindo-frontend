@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Popover } from 'antd';
+import { Popover, Carousel} from 'antd';
 
 const PostImages = ({ images = [], taggedProductsByImage = {} }) => {
   const containerRefs = useRef([]);
@@ -14,72 +14,73 @@ const PostImages = ({ images = [], taggedProductsByImage = {} }) => {
   if (!images || images.length === 0) return null;
 
   return (
-    <>
-      {images.map((image, idx) => {
-        const tags = taggedProductsByImage?.[image.id] || [];
+<Carousel dots>
+  {images.map((image, idx) => {
+    const tags = taggedProductsByImage?.[image.id] || [];
 
-        return (
-          <div key={image.id} style={{ marginBottom: '16px', width: 'fit-content' }}>
-            <div
-              ref={(el) => (containerRefs.current[idx] = el)}
-              style={{
-                position: 'relative',
-                display: 'inline-block',
-                width: '600px',
-                height: '600px',
-                borderRadius: '12px',
-                overflow: 'hidden',
-              }}
-            >
-              <img
-                src={image.src}
-                alt="게시 이미지"
-                style={{
-                  width: 'auto',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  display: 'block',
-                }}
-              />
+    return (
+      <div key={image.id}>
+        <div
+          ref={(el) => (containerRefs.current[idx] = el)}
+          style={{
+            position: 'relative',
+            width: '600px',
+            height: '600px',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            margin: '0 auto',
+           marginBottom :'12px',
+          }}
+        >
+          <img
+            src={image.src}
+            alt="게시 이미지"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover', // 또는 'contain' 도 가능
+              display: 'block',
+            }}
+          />
 
-              {/* 태그 표시 */}
-              {tags.map((tag, tIdx) => (
-                <Link key={tIdx} href={`/product/${tag.uid}`} passHref>
-                  <Popover
-                    content={
-                      <div>
-                        <p style={{ margin: 0 }}>상품명: {tag.name}</p>
-                        <p>₩{tag.price?.toLocaleString()}</p>
-                      </div>
-                    }
-                    trigger="hover"
-                    getPopupContainer={() => containerRefs.current[idx]}
-                  >
-                    <a
-                      style={{
-                        position: 'absolute',
-                        top: `${tag.y}%`,
-                        left: `${tag.x}%`,
-                        backgroundColor: 'white',
-                        color: 'red',
-                        padding: '4px 6px',
-                        fontSize: '12px',
-                        borderRadius: '8px',
-                        textDecoration: 'none',
-                        zIndex: 10,
-                      }}
-                    >
-                      🔗
-                    </a>
-                  </Popover>
-                </Link>
-              ))}
-            </div>
-          </div>
-        );
-      })}
-    </>
+          {tags.map((tag, tIdx) => (
+            <Link key={tIdx} href={`/product/${tag.uid}`} legacyBehavior>
+              <Popover
+  trigger="hover"
+  content={
+    <div>
+      <p style={{ margin: 0 }}>상품명: {tag.name}</p>
+      <p>₩{tag.price?.toLocaleString()}</p>
+    </div>
+  }
+>
+  <a
+    style={{
+      position: 'absolute',
+      top: `${tag.y}%`,
+      left: `${tag.x}%`,
+      backgroundColor: 'white',
+      color: 'red',
+      padding: '4px 6px',
+      fontSize: '12px',
+      borderRadius: '8px',
+      textDecoration: 'none',
+      zIndex: 999,
+    }}
+  >
+    🔗
+  </a>
+</Popover>
+
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  })}
+</Carousel>
+
+
   );
 };
 

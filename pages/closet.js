@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-//import { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Head from "next/head";
 import AppLayout from "../components/AppLayout";
@@ -8,14 +8,21 @@ import { fetchClosetData, categories ,setInitialClothes } from "../reducers/prod
 
 const Closet = () => {
   const { me } = useSelector((state) => state.user || {}); 
- // const router = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch();
   const { initialClothes } = useSelector((state) => state.product);
   useEffect(() => {
   console.log("🧺 리덕스에서 초기 옷장 상태:", initialClothes);
 }, [initialClothes]);
 
+  useEffect(() => {
+    if (!me?.id) {
+      router.push('/login'); // ✅ 로그인 안 되어 있으면 로그인 페이지로 이동
+    }
+  }, [me, router]);
 
+   if (!me?.id) return null; 
+   
 useEffect(() => {
   if (me?.id) {
     dispatch(fetchClosetData()).then((action) => {
