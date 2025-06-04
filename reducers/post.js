@@ -76,7 +76,7 @@ export const initialState = {
   taggedPosts: [],
   uploadedImages: [],   // ✅ 이미지 파일 저장
   imagePaths: [],
-  hasMorePosts: true,
+  hasNext: true,
   likePostLoading: false,
   likePostDone: false,
   likePostError: null,
@@ -119,7 +119,7 @@ export const loadHashtagPosts = createAsyncThunk(
       const response = await axiosInstance.get('/posts/hashtag', {
         params: { hashtag, lastId },
       });
-      return response.data; // { posts: PostDTO[], hasMorePosts: boolean }
+      return response.data; // { posts: PostDTO[], hasNext: boolean }
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -134,7 +134,7 @@ export const loadUserPosts = createAsyncThunk(
       const response = await axiosInstance.get(`/users/${id}/posts`, {
         params: { lastId },
       });
-      return response.data; // ✅ { posts: PostDTO[], hasMorePosts: boolean }
+      return response.data; // ✅ { posts: PostDTO[], hasNext: boolean }
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -160,17 +160,44 @@ async ({lastId}, { rejectWithValue }) => {
 
 export const throttledFetchPosts = _.throttle(fetchPosts, 5000); // 5초 제한  
  
+// export const loadPosts = createAsyncThunk(
+//   'post/loadPosts',
+//   async (lastId, thunkAPI) => {
+//     try {
+//       const result = await throttledFetchPosts(lastId);
+//       return result; // { posts: [...], hasNext: true/false }
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.message);
+//     }
+//   }
+// );
+
 export const loadPosts = createAsyncThunk(
   'post/loadPosts',
   async (lastId, thunkAPI) => {
     try {
-      const result = await throttledFetchPosts(lastId);
-      return result; // { posts: [...], hasMorePosts: true/false }
+      const response = await axiosInstance.get('/posts', {
+        params: { lastId },
+      });
+
+      // 응답이 배열이면 감싸주기
+      if (Array.isArray(response.data)) {
+        return { posts: response.data };
+      }
+
+      // 응답이 객체라면 posts 필드로 반환되도록
+      return {
+        posts: response.data?.posts || [],
+        hasNext: response.data?.hasNext ?? false,
+      };
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      console.error("❌ loadPosts error:", error);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
+
 export const loadPost = createAsyncThunk(
   'post/loadPost',
   async ({ id:postId }, thunkAPI) => {
@@ -562,7 +589,7 @@ const postSlice = createSlice({
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
         draft.mainPosts = [...draft.mainPosts, ...action.payload.posts]; // 기존 데이터 유지하며 새 데이터 추가
-        draft.hasMorePosts = action.payload.hasMorePosts; // 무한 스크롤링 가능 여부 설정
+        draft.hasNext = action.payload.hasNext; // 무한 스크롤링 가능 여부 설정
       })
       
       .addCase(loadPosts.rejected, (draft, action) => {
@@ -581,7 +608,7 @@ const postSlice = createSlice({
         draft.mainPosts = draft.mainPosts.concat(action.payload.posts); // ✅ 배열 concat
         draft.posts = action.payload.posts;
       
-        draft.hasMorePosts = action.payload.hasMorePosts; // ✅ 명세와 일치
+        draft.hasNext = action.payload.hasNext; // ✅ 명세와 일치
         console.log('✅ 게시글 응답:', action.payload);
       })
       .addCase(loadUserPosts.rejected, (draft, action) => {
@@ -597,7 +624,7 @@ const postSlice = createSlice({
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
         draft.mainPosts = draft.mainPosts.concat(action.payload.posts);
-        draft.hasMorePosts = action.payload.hasMorePosts;
+        draft.hasNext = action.payload.hasNext;
         
       })
       .addCase(loadHashtagPosts.rejected, (draft, action) => {
