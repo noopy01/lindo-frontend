@@ -30,13 +30,7 @@ const Home = () => {
     setClientLoaded(true);
   }, []);
 
-  // 마지막 게시글 ID 구하기
-  const getLastPostId = () => {
-    if (visiblePosts.length === 0) return null;
-    return visiblePosts[visiblePosts.length - 1].id;
-  };
 
-  // 게시글 불러오기
 
 // 게시글 불러오기
 const fetchMorePosts = useCallback(async () => {
@@ -186,11 +180,11 @@ useEffect(() => {
               불러오는 중...
             </p>
           )}
-{!hasNext && visiblePosts.length > 0 && (
-  <p style={{ textAlign: "center", marginTop: "20px" }}>
-    모든 게시글을 불러왔습니다.
-  </p>
-)}
+          {!hasNext && visiblePosts.length > 0 && (
+            <p style={{ textAlign: "center", marginTop: "20px" }}>
+              모든 게시글을 불러왔습니다.
+            </p>
+          )}
 
 
         </Content>
