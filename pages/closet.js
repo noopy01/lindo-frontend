@@ -21,8 +21,8 @@ const Closet = () => {
     }
   }, [me, router]);
 
-   if (!me?.id) return null; 
-   
+  
+
 useEffect(() => {
   if (me?.id) {
     dispatch(fetchClosetData()).then((action) => {
@@ -62,7 +62,7 @@ console.log("📏 각 카테고리 길이:", Object.fromEntries(Object.entries(i
   if (!me) {
     return <div>Loading...</div>; // 로그인 확인 중
   }
-
+ if (!me?.id) return null; 
 
   return (
     <>

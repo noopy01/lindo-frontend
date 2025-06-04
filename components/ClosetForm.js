@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { Button, Row, Col, Modal, Typography } from "antd";
+import { Button, Row, Col, Modal, Typography ,message} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import Router from "next/router";
 import { useDispatch } from "react-redux";

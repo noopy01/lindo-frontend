@@ -29,12 +29,7 @@ const ProductDetailPage = () => {
     }
   }, [router.isReady, uid]);
 
-if (!router.isReady || !uid) return <p>라우터 준비 중...</p>;
-if (getProductError) return <p>상품 정보를 불러오는 데 실패했습니다.</p>;
-if (!product) return <p>상품 정보를 불러오는 중입니다...</p>;
-if (product?.uid && String(product.uid).split('_')[1] !== String(uid)) {
-  return <p>상품 UID 불일치로 로딩 중...</p>;
-}
+
 
 
   useEffect(() => {
@@ -45,7 +40,12 @@ if (product?.uid && String(product.uid).split('_')[1] !== String(uid)) {
 // UID가 _로 구분되어 있다면 비교
   // const productIdSplit = String(product.uid).split('_')[1];
   // if (productIdSplit !== String(uid)) return <p>로딩 중...</p>;
-
+if (!router.isReady || !uid) return <p>라우터 준비 중...</p>;
+if (getProductError) return <p>상품 정보를 불러오는 데 실패했습니다.</p>;
+if (!product) return <p>상품 정보를 불러오는 중입니다...</p>;
+if (product?.uid && String(product.uid).split('_')[1] !== String(uid)) {
+  return <p>상품 UID 불일치로 로딩 중...</p>;
+}
 
   console.log('🧾 router uid:', uid);
 console.log('🧾 product.uid:', product?.uid);

@@ -245,7 +245,7 @@ return (
     {images.length > 0 && (
       <div style={{ display: 'flex', gap: 10, marginTop: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
         {images.map((img, idx) => {
-          const tags = taggedProductsByImage[img.id] || [];
+         // const tags = taggedProductsByImage[img.id] || [];
           return (
             <div key={img.id} style={{ position: 'relative' }}>
               <Image
