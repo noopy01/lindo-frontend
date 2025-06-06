@@ -36,20 +36,31 @@ const user = isMyProfile ? me : profileUser;
 //const posts = isMyProfile ? [] : (profileUser?.posts || []); // ✅ 수정
 //const [posts, setPosts] = useState([]);
 
- const followingsCount = useMemo(() => {
-  return user?.followingsCount ?? user?.Followings?.length ?? followingsList?.length ?? 0;
-}, [user, followingsList]);
+//  const followingsCount = useMemo(() => {
+//   return user?.followingsCount ?? user?.Followings?.length ?? followingsList?.length ?? 0;
+// }, [user, followingsList]);
 
-useEffect(() => {
-  console.log("🧾 followerList 확인:", followersList);
-}, [followingsList]);
- const followersCount = useMemo(() => {
-  return user?.followersCount ?? user?.Followers?.length ??followersList?.length ?? 0 ;
-}, [user, followersList]);
+// useEffect(() => {
+//   console.log("🧾 followerList 확인:", followersList);
+// }, [followingsList]);
+//  const followersCount = useMemo(() => {
+//   return user?.followersCount ?? user?.Followers?.length ??followersList?.length ?? 0 ;
+// }, [user, followersList]);
 
-useEffect(() => {
-  console.log("🧾 followingsList 확인:", followingsList);
-}, [followingsList]);
+// useEffect(() => {
+//   console.log("🧾 followingsList 확인:", followingsList);
+// }, [followingsList]);
+
+const filteredFollowings = useMemo(() => {
+  return followingsList.filter(user => user.id !== me?.id);
+}, [followingsList, me?.id]);
+
+const filteredFollowers = useMemo(() => {
+  return followersList.filter(user => user.id !== me?.id);
+}, [followersList, me?.id]);
+
+
+
 //  const [viewedUser, setViewedUser] = useState(null);
   const [postsVisible, setPostsVisible] = useState(true);
   const [followerModalVisible, setFollowerModalVisible] = useState(false);
@@ -190,7 +201,7 @@ console.log("🔥 user 객체 확인:", user);
             onClick={() => setFollowerModalVisible(true)}
           >
             팔로워<br />
-            {user?.followersCount ?? user?.Followers?.length ??followersList?.length ?? 0 }
+              {filteredFollowers.length}
           </div>,
 <div
   key="following"
@@ -198,11 +209,12 @@ console.log("🔥 user 객체 확인:", user);
   onClick={() => setFollowingModalVisible(true)}
 >
   팔로잉<br />
-  {
+  {/* {
     user?.followingsCount ??
     user?.Followings?.length ??
     followingsList?.length ?? 0
-  }
+  } */}
+    {filteredFollowings.length}
 </div>
 
 
@@ -316,8 +328,8 @@ console.log("🔥 user 객체 확인:", user);
 >
 <FollowingList
   header="팔로잉"
-  data={followingsList.filter(user => user.id !== me?.id)}
-  totalCount={followingsList.filter(user => user.id !== me?.id).length}
+  data={filteredFollowings}
+  totalCount={filteredFollowings.length}
 /></Modal>
 
 <Modal
@@ -328,8 +340,8 @@ console.log("🔥 user 객체 확인:", user);
 >
 <FollowList
   header="팔로워"
-  data={followersList.filter(user => user.id !== me?.id)}
-  totalCount={followersList.filter(user => user.id !== me?.id).length}
+    data={filteredFollowers}
+    totalCount={filteredFollowers.length}
 /></Modal>
 </div>
     </>
