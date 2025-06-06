@@ -43,9 +43,7 @@ const ProductDetailPage = () => {
 if (!router.isReady || !uid) return <p>라우터 준비 중...</p>;
 if (getProductError) return <p>상품 정보를 불러오는 데 실패했습니다.</p>;
 if (!product) return <p>상품 정보를 불러오는 중입니다...</p>;
-if (product?.uid && String(product.uid).split('_')[1] !== String(uid)) {
-  return <p>상품 UID 불일치로 로딩 중...</p>;
-}
+
 
   console.log('🧾 router uid:', uid);
 console.log('🧾 product.uid:', product?.uid);
@@ -63,7 +61,8 @@ console.log('taggedPosts',taggedPosts)
               <img src={product.thumbnail} alt={product.productName} style={{ maxHeight: 400, objectFit: 'contain' }} />
             }
             variant={false}
-          >
+          > 
+            <Paragraph>브랜드: {product.brand}</Paragraph>
             <Paragraph>가격: ₩{product.price?.toLocaleString()}</Paragraph>
           </Card>
         </div>
