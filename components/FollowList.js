@@ -104,14 +104,12 @@ const loadMoreButton = useMemo(
   [loading, loadedData.length, totalCount]
 );
 
+const styles = useMemo(() => ({
+  list: { marginBottom: 20 },
+  listItem: { marginTop: 20 },
+  loadMore: { textAlign: 'center', margin: '12px 0' },
+}), []);
 
-  const styles = useMemo(
-    () => ({
-      list: { marginBottom: 20 },
-      listItem: { marginTop: 20 },
-    }),
-    []
-  );
 
   return (
 
