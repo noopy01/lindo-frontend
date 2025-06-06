@@ -1,16 +1,17 @@
 import { Button, Card, List, Avatar, Skeleton, Divider } from "antd";
 import PropTypes from "prop-types";
 import { useMemo, useState, useEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+//import InfiniteScroll from "react-infinite-scroll-component";
 import Link from "next/link";
 import { useDispatch } from 'react-redux';
 import { loadFollowers, follow, unfollow } from '../reducers/user';
 
-const FollowList = ({ header, data, totalCount = 0 }) => {
+const FollowList = ({ header, data = [], totalCount = 0 }) => {
   const dispatch = useDispatch();
 
   const [loadedData, setLoadedData] = useState(data);
   const [loading, setLoading] = useState(false);
+  const [offset, setOffset] = useState(data.length);
 
   // follow 상태 관리
   const [followStatus, setFollowStatus] = useState(
@@ -20,38 +21,16 @@ const FollowList = ({ header, data, totalCount = 0 }) => {
     }, {})
   );
 
-  useEffect(() => {
-    setFollowStatus(
-      loadedData.reduce((acc, user) => {
-        if (user?.id) acc[user.id] = true;
-        return acc;
-      }, {})
-    );
-  }, [loadedData]);
+useEffect(() => {
+  setFollowStatus(
+    loadedData.reduce((acc, user) => {
+      if (user?.id) acc[user.id] = true;
+      return acc;
+    }, {})
+  );
+}, [loadedData]);
 
-  const loadMoreData = () => {
-    if (loading || loadedData.length >= totalCount) return;
-    setLoading(true);
 
-    dispatch(loadFollowers({ offset: loadedData.length }))
-      .then((res) => {
-        const users = res.payload?.users;
-        if (Array.isArray(users)) {
-          const newCombined = [...loadedData, ...users];
-          const uniqueMap = new Map();
-          newCombined.forEach(user => uniqueMap.set(user.id, user));
-          const uniqueUsers = Array.from(uniqueMap.values());
-          setLoadedData(uniqueUsers);
-        } else {
-          console.warn("응답에 users 배열이 없습니다:", res.payload);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("❌ 팔로워 불러오기 실패:", err);
-        setLoading(false);
-      });
-  };
 
   const onFollowToggle = async (id) => {
     const isCurrentlyFollowing = followStatus[id];
@@ -70,6 +49,62 @@ const FollowList = ({ header, data, totalCount = 0 }) => {
     }
   };
 
+  // const loadMoreData = () => {
+  //   if (loading || loadedData.length >= totalCount) return;
+  //   setLoading(true);
+
+  //   dispatch(loadFollowers({ offset: loadedData.length }))
+  //     .then((res) => {
+  //       const users = res.payload?.users;
+  //       if (Array.isArray(users)) {
+  //         const newCombined = [...loadedData, ...users];
+  //         const uniqueMap = new Map();
+  //         newCombined.forEach(user => uniqueMap.set(user.id, user));
+  //         const uniqueUsers = Array.from(uniqueMap.values());
+  //         setLoadedData(uniqueUsers);
+  //       } else {
+  //         console.warn("응답에 users 배열이 없습니다:", res.payload);
+  //       }
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.error("❌ 팔로워 불러오기 실패:", err);
+  //       setLoading(false);
+  //     });
+  // };
+const handleLoadMore = async () => {
+  if (loading || loadedData.length >= totalCount) return;
+  setLoading(true);
+  try {
+    const res = await dispatch(loadFollowers({ offset })).unwrap();
+   // const newUsers = res.users || [];
+const newUsers = Array.isArray(res?.users) ? res.users : [];
+
+    // 중복 제거 후 업데이트
+    const combined = [...loadedData, ...newUsers];
+    const uniqueUsers = Array.from(new Map(combined.map(user => [user.id, user])).values());
+
+    setLoadedData(uniqueUsers);
+    setOffset((prev) => prev + newUsers.length);
+  } catch (e) {
+    console.error("🚨 loadFollowers 실패:", e);
+  }
+  setLoading(false);
+};
+
+const loadMoreButton = useMemo(
+  () =>
+    loadedData.length < totalCount ? (
+      <div style={styles.loadMore}>
+        <Button loading={loading} onClick={handleLoadMore}>
+          더 보기
+        </Button>
+      </div>
+    ) : null,
+  [loading, loadedData.length, totalCount]
+);
+
+
   const styles = useMemo(
     () => ({
       list: { marginBottom: 20 },
@@ -79,23 +114,7 @@ const FollowList = ({ header, data, totalCount = 0 }) => {
   );
 
   return (
-    <div
-      id="scrollableDiv"
-      style={{
-        height: 400,
-        overflow: "auto",
-        padding: "0 16px",
-        border: "1px solid rgba(140, 140, 140, 0.35)",
-      }}
-    >
-      <InfiniteScroll
-        dataLength={loadedData.length}
-        next={loadMoreData}
-        hasMore={loadedData.length < totalCount}
-        loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-        endMessage={<Divider plain>더 이상 데이터가 없습니다.</Divider>}
-        scrollableTarget="scrollableDiv"
-      >
+
         <List
           style={styles.list}
           grid={{ gutter: 4, xs: 2, md: 3 }}
@@ -103,6 +122,7 @@ const FollowList = ({ header, data, totalCount = 0 }) => {
           header={<div>{header}</div>}
           bordered
           dataSource={loadedData}
+          loadMore={loadMoreButton}
           renderItem={(item) => {
             const userId = item.id;
             const isFollowing = followStatus[userId];
@@ -145,8 +165,7 @@ const FollowList = ({ header, data, totalCount = 0 }) => {
             );
           }}
         />
-      </InfiniteScroll>
-    </div>
+
   );
 };
 
