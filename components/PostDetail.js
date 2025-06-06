@@ -126,9 +126,9 @@ useEffect(() => {
   }
 }, [likedPosts, post]);
 
-  const isBookmarked = useMemo(() => {
-    return bookmarkedPosts?.some((p) => String(p.id) === String(post?.id));
-  }, [bookmarkedPosts, post]);
+  // const isBookmarked = useMemo(() => {
+  //   return bookmarkedPosts?.some((p) => String(p.id) === String(post?.id));
+  // }, [bookmarkedPosts, post]);
 
 useEffect(() => {
   if (post && typeof post.likeCount === 'number') {
@@ -178,7 +178,7 @@ const onRemovePost = useCallback(
     try {
       await dispatch(removePost(postId)).unwrap(); // 💡 unwrap으로 에러 핸들링 확실히
       message.success('게시글이 성공적으로 삭제되었습니다!');
-      router.push(`/mypage`); // ✅ 마이페이지로 이동
+      router.push(`/mypage`); //  마이페이지로 이동
     } catch (err) {
       console.error('Failed to remove post:', err);
       message.error('게시글 삭제에 실패했습니다.');
