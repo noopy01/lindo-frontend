@@ -24,8 +24,8 @@ const UserProfile = ({ userId: propUserId }) => {
 
   const followingsList = useSelector((state) => state.user.followingsList);
   const followersList = useSelector((state) => state.user.followersList);
-  //const followersCount = followersList.length;
- // const followingsCount = followingsList.length;
+//   const followersCount = followersList.length;
+//  const followingsCount = followingsList.length;
 
 //const isMyProfile = me?.id === userId;
  const isMyProfile = useMemo(() => {
@@ -33,7 +33,7 @@ const UserProfile = ({ userId: propUserId }) => {
     return me.id === userId;
   }, [me, userId]);
 const user = isMyProfile ? me : profileUser;
-//const posts = isMyProfile ? [] : (profileUser?.posts || []); // ✅ 수정
+//const posts = isMyProfile ? [] : (profileUser?.posts || []); // 수정
 //const [posts, setPosts] = useState([]);
 
 //  const followingsCount = useMemo(() => {
@@ -43,7 +43,8 @@ const user = isMyProfile ? me : profileUser;
 // useEffect(() => {
 //   console.log("🧾 followerList 확인:", followersList);
 // }, [followingsList]);
-//  const followersCount = useMemo(() => {
+ 
+// const followersCount = useMemo(() => {
 //   return user?.followersCount ?? user?.Followers?.length ??followersList?.length ?? 0 ;
 // }, [user, followersList]);
 
@@ -201,7 +202,7 @@ console.log("🔥 user 객체 확인:", user);
             onClick={() => setFollowerModalVisible(true)}
           >
             팔로워<br />
-              {filteredFollowers.length}
+              {followerModalVisible ? filteredFollowers.length : user.followersCount}
           </div>,
 <div
   key="following"
@@ -214,7 +215,7 @@ console.log("🔥 user 객체 확인:", user);
     user?.Followings?.length ??
     followingsList?.length ?? 0
   } */}
-    {filteredFollowings.length}
+    {followingModalVisible ? filteredFollowings.length : user.followingsCount}
 </div>
 
 
