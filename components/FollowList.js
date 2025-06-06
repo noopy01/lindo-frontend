@@ -131,9 +131,14 @@ const FollowList = ({ header, data, totalCount = 0 }) => {
                     ]}
                   >
                     <Card.Meta
-                      avatar={<Avatar src={`https://i.pravatar.cc/150?u=${userId}`} />}
+                      avatar={
+                        <Avatar style={{ backgroundColor: '#87d068' }}>
+                          {item.nickname?.[0] || '?'}
+                        </Avatar>
+                      }
                       title={item.nickname}
                     />
+
                   </Card>
                 </Link>
               </List.Item>

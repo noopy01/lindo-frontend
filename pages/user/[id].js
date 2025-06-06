@@ -77,7 +77,7 @@ const postList = user?.posts || [];
 
   return (
     <AppLayout>
-      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "24px" }}>
+      <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "24px" }}>
         <Card
           style={styles.cardContainer}
           actions={[
@@ -111,7 +111,7 @@ const postList = user?.posts || [];
 
         {/* 게시물 썸네일 리스트 */}
         {postsVisible && postList.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: '16px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '16px', justifyContent: "space-between"  }}>
             {postList.map((post) => (
               <Link href={`/post/${post.id}`} key={post.id}>
                 <div style={{ width: '200px', height: '200px', position: 'relative' }}>

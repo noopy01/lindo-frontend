@@ -314,8 +314,11 @@ console.log("🔥 user 객체 확인:", user);
   footer={null}
   onCancel={() => setFollowingModalVisible(false)}
 >
-  <FollowingList header="팔로잉" data={followingsList} totalCount={followingsCount}  />
-</Modal>
+<FollowingList
+  header="팔로잉"
+  data={followingsList.filter(user => user.id !== me?.id)}
+  totalCount={followingsList.filter(user => user.id !== me?.id).length}
+/></Modal>
 
 <Modal
   title="팔로워 목록"
@@ -323,8 +326,11 @@ console.log("🔥 user 객체 확인:", user);
   footer={null}
   onCancel={() => setFollowerModalVisible(false)}
 >
-  <FollowList header="팔로워" data={followersList} totalCount={followersCount}  />
-</Modal>
+<FollowList
+  header="팔로워"
+  data={followersList.filter(user => user.id !== me?.id)}
+  totalCount={followersList.filter(user => user.id !== me?.id).length}
+/></Modal>
 </div>
     </>
   );
