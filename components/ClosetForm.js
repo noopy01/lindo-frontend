@@ -29,10 +29,12 @@ const ClosetForm = ({ showUploadButton = true, isOwner }) => {
   };
 
 const handleDelete = async (productUid) => {
-  const productId = String(productUid).split('_')[1];
+  const uid = String(productUid);                // ✅ 여기서 uid 정의
+  const productId = uid.split('_')[1];           // ✅ uid를 사용해 ID 추출
+
   if (confirm("정말 삭제하시겠습니까?")) {
     try {
-      const result = await dispatch(deleteProduct(productId)).unwrap(); // ✅ 결과 확인
+      const result = await dispatch(deleteProduct(productId)).unwrap();  // ✅ productId 사용
       console.log("🗑️ 삭제 성공:", result);
       setPreviewOpen(false);
       setSelectedProduct(null);
@@ -42,6 +44,7 @@ const handleDelete = async (productUid) => {
     }
   }
 };
+
 useEffect(() => {
   console.log("🔄 clothesData 변경됨:", clothesData);
 }, [clothesData]);

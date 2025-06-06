@@ -158,8 +158,8 @@ export const deleteProduct = createAsyncThunk(
   async (productId, thunkAPI) => {
     try {
      const response = await axiosInstance.delete(`/closet/me/product/${productId}`);
-     // return response.data.deletedId; // ✅ deletedId만 반환
-     return `4_${response.data.deletedId}`;
+     return response.data.deletedId; // ✅ deletedId만 반환
+     //return `4_${response.data.deletedId}`;
 
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
