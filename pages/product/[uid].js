@@ -6,7 +6,7 @@ import { Card, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getProductById } from '../../reducers/product';
+import { getProductByInfo} from '../../reducers/product';
 
 const { Title, Paragraph } = Typography;
 
@@ -23,7 +23,7 @@ const ProductDetailPage = () => {
   // ✅ router.isReady 체크
   useEffect(() => {
     if (router.isReady && uid) {
-      dispatch(getProductById(uid));
+      dispatch(getProductByInfo(uid));
       dispatch(fetchPostsByTaggedProduct(uid));
       setIsReady(true);
     }
@@ -66,42 +66,7 @@ console.log('taggedPosts',taggedPosts)
           >
             <Paragraph>가격: ₩{product.price?.toLocaleString()}</Paragraph>
           </Card>
-
- {/* <div style={{ marginTop: 40 }}>
-  <Title level={4}>이 상품이 태그된 게시글</Title>
-
-  {taggedPosts?.length === 0 ? (
-    <Paragraph>이 상품이 태그된 게시글이 아직 없습니다.</Paragraph>
-  ) : (
-     <List
-       dataSource={taggedPosts}
-       renderItem={(post) => (
-         <List.Item>
-           <Link href={`/post/${post.id}`}>{post.content}</Link>
-           <Link href={`/post/${post.id}`} legacyBehavior>
-             <a>
-               <img
-                 src={post.thumbnail}
-                 alt="게시글 썸네일"
-                 style={{
-                   maxWidth: '100%',
-                   maxHeight: '200px',
-                   objectFit: 'contain',
-                   display: 'block',
-                   marginTop: '8px',
-                   borderRadius: '8px',
-                   background: '#f5f5f5',
-                 }}
-               />
-             </a>
-           </Link>
-         </List.Item>
-       )}
-     />
-  
-  )}
-</div>  */}
-</div>
+        </div>
       </AppLayout>
     </>
   );

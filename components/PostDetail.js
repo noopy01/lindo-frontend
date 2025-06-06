@@ -40,9 +40,13 @@ function PostDetail() {
   //const { removePostLoading } = useSelector((state) => state.post);
   const [editMode, setEditMode] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
-const [clientReady, setClientReady] = useState(false);
-const likedPosts = useSelector((state) => state.user.likedPosts);
- const bookmarkedPosts = useSelector((state) => state.user.bookmarkedPosts);
+  const [clientReady, setClientReady] = useState(false);
+  const likedPosts = useSelector((state) => state.user.likedPosts);
+  const bookmarkedPosts = useSelector((state) => state.user.bookmarkedPosts);
+  const [isBookmarkedState, setIsBookmarkedState] = useState(false);
+  const [isLikedState, setIsLikedState] = useState(false);
+
+
 useEffect(() => {
   setClientReady(true);
 }, []);
@@ -110,97 +114,58 @@ const transformedPost = useMemo(() => {
     [dispatch, post]
   );
 
-  // const isLiked = me?.likedPosts?.some((post) => {
-  //   // post가 PostId 필드를 가진 경우
-  //   return (post.PostId ?? post.id) === postId;
-  // });
-  // const isLiked = me?.likedPosts?.some((liked) => {
-  //   return (liked.PostId ?? liked.id) === post.id;
-  // });
-  // const isLiked = me?.likedPosts?.some((liked) => liked &&  liked.id === post.id);
 
 // const isLiked = useMemo(() => {
-//   if (!post || !Array.isArray(me?.likedPosts)) return false;
-//   return me.likedPosts.some((p) => String(p.id) === String(post.id));
-// }, [me, post]);
+//   if (!likedPosts || !post) return false;
+//   return likedPosts.some((p) => String(p.id) === String(post.id));
+// }, [likedPosts, post]);
 
-// const isLiked = useMemo(
-//   () => likedPosts.some((p) => String(p.id) === String(post?.id)),
-//   [likedPosts, post]
-// );
-
-  // const onUnlike = useCallback(() => {
-  //   if (!me) return alert('로그인이 필요합니다.');
-  //   dispatch(unlikePost(post.id));
-  // }, [me, dispatch, post?.id]);
-
-  // const onLike = useCallback(() => {
-  //   if (!me) return alert('로그인이 필요합니다.');
-  //   if (!post || !post.content) return alert('게시글 정보가 유효하지 않습니다.');
-  
-  //   if (isLiked) {
-  //     dispatch(unlikePost(post.id)) // 해제는 id만 넘겨도 OK
-  //       .unwrap()
-  //       .then(() => message.success('좋아요에서 제거되었습니다!'))
-  //       .catch((err) => {
-  //         message.error('좋아요 해제 실패');
-  //         console.error(err);
-  //       });
-  //   } else {
-  //       dispatch(likePost(post.id))
-  //       .unwrap()
-  //       .then(() => message.success('좋아요에 추가되었습니다!'))
-  //       .catch((err) => {
-  //         message.error('좋아요 실패');
-  //         console.error(err);
-  //       });
-  //   }
-  //   console.log("🔥 likePost 요청 postId:", post?.id); 
-
-  // }, [me, dispatch, post,isLiked]);
-
-  //   const isLiked = useMemo(() => {
-  //   return likedPosts?.some((p) => String(p.id) === String(post?.id));
-  // }, [likedPosts, post?.id]);
-const isLiked = useMemo(() => {
-  if (!likedPosts || !post) return false;
-  return likedPosts.some((p) => String(p.id) === String(post.id));
+useEffect(() => {
+  if (likedPosts && post) {
+    setIsLikedState(likedPosts.some(p => String(p.id) === String(post.id)));
+  }
 }, [likedPosts, post]);
 
   const isBookmarked = useMemo(() => {
     return bookmarkedPosts?.some((p) => String(p.id) === String(post?.id));
   }, [bookmarkedPosts, post]);
 
-
 useEffect(() => {
-  if (post?.likeCount !== undefined) {
+  if (post && typeof post.likeCount === 'number') {
     console.log('🧡 useEffect로 likeCount 설정:', post.likeCount);
     setLikeCount(post.likeCount);
   }
-}, [post?.likeCount]);
+}, [post?.id]); // ✅ post.id로 설정하면 한 번만 정확히 동작함
+
 
 const onLike = useCallback(() => {
   if (!me) return alert('로그인이 필요합니다.');
   if (!post?.content) return alert('게시글 정보가 유효하지 않습니다.');
 
-  const action = isLiked ? unlikePost : likePost;
+  const action = isLikedState ? unlikePost : likePost;
+
+  // ✅ 먼저 즉시 UI 반영
+  setIsLikedState(!isLikedState);
+  setLikeCount(prev => prev + (isLikedState ? -1 : 1));
 
   dispatch(action(post.id))
     .unwrap()
     .then((res) => {
-       console.log('🎯 서버 응답:', res);
-   setLikeCount(prev => prev + (isLiked ? -1 : 1)); // 임시 반영
-dispatch(action(post.id))
-  .unwrap()
-  .then(res => setLikeCount(res.likeCount)); // 서버 최종값 동기화
-
-    message.success(isLiked ? '좋아요에서 제거되었습니다!' : '좋아요에 추가되었습니다!');
+      // 서버 응답 기준으로 최종 동기화 (필요하면)
+      if (typeof res.likeCount === 'number') {
+        setLikeCount(res.likeCount);
+      }
     })
     .catch((err) => {
+      // 에러 나면 원래대로 되돌리기
+      setIsLikedState(prev => !prev);
+      setLikeCount(prev => prev + (isLikedState ? 1 : -1));
       console.error('좋아요 처리 실패:', err);
       message.error('좋아요 처리 실패');
     });
-}, [me, post, isLiked, dispatch]);
+}, [me, post, isLikedState, dispatch]);
+
+
 
 
   const onToggleComment = useCallback(() => {
@@ -221,30 +186,53 @@ const onRemovePost = useCallback(
   },
   [me, dispatch, router]
 );
+ useEffect(() => {
+  if (bookmarkedPosts && post) {
+    setIsBookmarkedState(
+      bookmarkedPosts.some((p) => String(p.id) === String(post?.id))
+    );
+  }
+}, [bookmarkedPosts, post]);
 
-  
   const onBookMark = useCallback(() => {
-    if (!me) return alert('로그인이 필요합니다.');
-    if (!post || !post.content) return alert('게시글 정보가 유효하지 않습니다.');
+  if (!me) return alert('로그인이 필요합니다.');
+  if (!post || !post.content) return alert('게시글 정보가 유효하지 않습니다.');
+
+  const action = isBookmarkedState ? unbookmark : bookmark;
+
+  dispatch(action(post.id))
+    .unwrap()
+    .then(() => {
+      setIsBookmarkedState(!isBookmarkedState); // 즉시 반영
+      message.success(isBookmarkedState ? '북마크에서 제거되었습니다!' : '북마크에 추가되었습니다!');
+    })
+    .catch((err) => {
+      console.error('북마크 처리 실패:', err);
+      message.error('북마크 처리 실패');
+    });
+}, [me, dispatch, post, isBookmarkedState]);
+  // const onBookMark = useCallback(() => {
+  //   if (!me) return alert('로그인이 필요합니다.');
+  //   if (!post || !post.content) return alert('게시글 정보가 유효하지 않습니다.');
   
-    if (isBookmarked) {
-      dispatch(unbookmark(post.id)) // 해제는 id만 넘겨도 OK
-        .unwrap()
-        .then(() => message.success('북마크에서 제거되었습니다!'))
-      .catch((err) => {
-        console.error('북마크 처리 실패:', err);
-        message.error('북마크 처리 실패');
-      });
-    } else {
-      dispatch(bookmark(post.id)) // ✅ postId 넘겨tj thunk가 생성 가능
-        .unwrap()
-        .then(() => message.success('북마크에 추가되었습니다!'))
-        .catch((err) => {
-          message.error('북마크 실패');
-          console.error(err);
-        });
-    }
-  }, [me, dispatch, post, isBookmarked]);
+  //   if (isBookmarked) {
+  //     dispatch(unbookmark(post.id)) // 해제는 id만 넘겨도 OK
+  //       .unwrap()
+  //       .then(() => message.success('북마크에서 제거되었습니다!'))
+  //     .catch((err) => {
+  //       console.error('북마크 처리 실패:', err);
+  //       message.error('북마크 처리 실패');
+  //     });
+  //   } else {
+  //     dispatch(bookmark(post.id)) // ✅ postId 넘겨tj thunk가 생성 가능
+  //       .unwrap()
+  //       .then(() => message.success('북마크에 추가되었습니다!'))
+  //       .catch((err) => {
+  //         message.error('북마크 실패');
+  //         console.error(err);
+  //       });
+  //   }
+  // }, [me, dispatch, post, isBookmarked]);
   
   if (!router.isReady) {
     return null; // or <LoadingSpinner />
@@ -252,9 +240,9 @@ const onRemovePost = useCallback(
   
   // if (!post) return <p>게시물을 찾을 수 없습니다.</p>;
  // console.log('likedPosts:', me?.likedPosts);
-  console.log('isLiked:', isLiked);
+  //console.log('isLiked:', isLiked);
   console.log('likedPosts:',likedPosts);
-    console.log('isLiked:', isBookmarked);
+   // console.log('isLiked:', isBookmarked);
   console.log('likedPosts:',bookmarkedPosts);
   console.log('post.id:', post?.id);
 
@@ -265,7 +253,7 @@ console.log('📌 현재 post:', post);
 //console.log('🔍 post.user:', post.user);
 console.log('🧡 현재 post.likeCount:', post?.likeCount);
 console.log('🟢 현재 likeCount state:', likeCount);
-console.log('🧪 isLiked 상태:', isLiked);
+//console.log('🧪 isLiked 상태:', isLiked);
 if (!post || !likedPosts) return null;
 
 //console.log("📌 taggedProducts:", post.taggedProducts);
@@ -279,23 +267,22 @@ if (!post) return <p>게시물을 찾을 수 없습니다.</p>;
         <div style={{ margin: '20px auto', maxWidth: '600px' }}>
 <Card
   actions={[
-    isBookmarked ? (
+    isBookmarkedState ? (
       <BookOutlined key="bookmark" style={{ color: '#1890ff' }} onClick={onBookMark} />
     ) : (
       <BookOutlined key="bookmark" onClick={onBookMark} />
     ),
-isLiked ? (
-  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-    <HeartTwoTone twoToneColor="#eb2f96" onClick={onLike} />
-    <span>{typeof likeCount === 'number' ? likeCount : 0}</span>
-  </span>
-) : (
-  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-    <HeartOutlined onClick={onLike} />
-    <span>{typeof likeCount === 'number' ? likeCount : 0}</span>
-
-  </span>
-),
+    isLikedState ? (
+      <span style={{ display: 'flex', alignItems: 'center', gap: 8 ,marginLeft:60}}>
+        <HeartTwoTone twoToneColor="#eb2f96" onClick={onLike} />
+        <span>{likeCount}</span>
+      </span>
+    ) : (
+      <span style={{ display: 'flex', alignItems: 'center', gap: 8,marginLeft:60 }}>
+        <HeartOutlined onClick={onLike} />
+        <span>{likeCount}</span>
+      </span>
+    ),
 
     <MessageOutlined key="comment" onClick={onToggleComment} />,
     <Popover

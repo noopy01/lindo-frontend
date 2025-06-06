@@ -158,7 +158,9 @@ export const deleteProduct = createAsyncThunk(
   async (productId, thunkAPI) => {
     try {
      const response = await axiosInstance.delete(`/closet/me/product/${productId}`);
-      return response.data.deletedId; // ✅ deletedId만 반환
+     // return response.data.deletedId; // ✅ deletedId만 반환
+     return `4_${response.data.deletedId}`;
+
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -194,7 +196,20 @@ export const getProductById = createAsyncThunk(
     }
   }
 );
-
+export const getProductByInfo = createAsyncThunk(
+  'product/getProductByInfo',
+  async (uid, thunkAPI) => {
+    try {
+      console.log('🔍 [getProductByInfo] 요청 uid:', uid); // ✅ uid 확인
+      const response = await axiosInstance.get(`/product/${uid}`);
+      console.log('✅ [getProductByInfo] 응답 데이터:', response.data); // ✅ 서버 응답 확인
+      return response.data;
+    } catch (error) {
+      console.error('❌ [getProductByInfo] 에러:', error.response?.data || error.message); // ✅ 에러 확인
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
 
 //로그인한 유저의 옷장 아이템 리스트
@@ -315,21 +330,37 @@ const productSlice = createSlice({
  draft.addProductError = action.payload || action.error.message;
  
       })
-      .addCase(deleteProduct.fulfilled, (draft, action) => {
-        const id = action.payload;
-      
-        for (const category in draft.initialClothes) {
-          draft.initialClothes[category] = draft.initialClothes[category].filter(p => p.uid !== id);
-        }
-      
-        for (const category in draft.closetItemsByCategory) {
-          draft.closetItemsByCategory[category] = draft.closetItemsByCategory[category].filter(p => p.uid !== id);
-        }
-      
-        draft.closetItems = draft.closetItems.filter(p => p.uid !== id);
-        draft.allClosetItems = draft.allClosetItems.filter(p => p.uid !== id);
-      })
-      
+.addCase(deleteProduct.fulfilled, (draft, action) => {
+  const id = String(action.payload);
+  console.log("🧩 삭제 대상 ID (payload):", id);
+
+  // initialClothes에서 uid 일치하는 항목 제거
+  for (const category in draft.initialClothes) {
+    draft.initialClothes[category] = draft.initialClothes[category].filter((p) => {
+      const uidSuffix = String(p.uid).split('_')[1];
+      console.log("🧺 비교 대상 p.uid:", p.uid, "->", uidSuffix);
+      return uidSuffix !== id;
+    });
+  }
+
+  // closetItemsByCategory에서도 제거
+  for (const category in draft.closetItemsByCategory) {
+    draft.closetItemsByCategory[category] = draft.closetItemsByCategory[category].filter(
+      (p) => String(p.uid).split('_')[1] !== id
+    );
+  }
+
+  // 기타 전역 리스트에서도 제거
+  draft.closetItems = draft.closetItems.filter(
+    (p) => String(p.uid).split('_')[1] !== id
+  );
+
+  draft.allClosetItems = draft.allClosetItems.filter(
+    (p) => String(p.uid).split('_')[1] !== id
+  );
+})
+
+
       // .addCase(updateProduct.fulfilled, (draft, action) => {
       //   const updated = action.payload;
       //   const category = updated.category;
@@ -338,6 +369,10 @@ const productSlice = createSlice({
       //   )
 .addCase(getProductById.fulfilled, (draft, action) => {
   console.log('📦 [Redux] getProductById.fulfilled:', action.payload); // ✅ payload 확인
+  draft.product = action.payload;
+})
+.addCase(getProductByInfo.fulfilled, (draft, action) => {
+  console.log('📦 [Redux] getProductByInfo.fulfilled:', action.payload); // ✅ payload 확인
   draft.product = action.payload;
 })
 
