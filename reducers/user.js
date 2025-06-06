@@ -384,18 +384,25 @@ export const logIn = createAsyncThunk('user/logIn', async (data, { rejectWithVal
 });
 
 
-
 export const logOut = createAsyncThunk(
   "user/logOut",
   async (_, { rejectWithValue }) => { 
     try {
       const response = await axiosInstance.post('/users/logout', {}, { withCredentials: true });
-      return response.data; // 👈 여기서 response.data가 { message: "Logged out successfully" } 형태여야 함
+
+      // ✅ 클라이언트 측 인증 정보 제거
+      localStorage.removeItem("accessToken");
+      sessionStorage.removeItem("accessToken");
+      // ✅ 쿠키를 쓰는 경우에도 클라이언트에서 수동 삭제 가능
+      document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+      return response.data; // ex: { message: "Logged out successfully" }
     } catch (error) {
       return rejectWithValue(error.response?.data || "로그아웃 실패");
     }
   }
 );
+
 
 export const follow = createAsyncThunk(
   'user/follow',
